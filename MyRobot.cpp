@@ -36,6 +36,9 @@ class RobotDemo: public IterativeRobot {
 	Solenoid launch;
 
 	bool armState, r1_Old, x_Old;
+
+	float turnforseconds;
+	bool canturn;
 public:
 	RobotDemo() :
 				myRobot(3, 4), // these must be initialized in the same order
@@ -53,6 +56,8 @@ public:
 
 		compressor.Start();
 		armState = false;
+		turnforseconds = 1;
+		canturn=	false;
 	}
 
 	/**
@@ -126,16 +131,24 @@ public:
 			//Set sticks for DriveRobot
 			myRobot.TankDrive(stick1, stick2);
 
-			//First check if the wench can be used test
+			//First check if the wench can be used 
 			if (isWenchCheckPressed.Get()) {
 				//switch wench on and off on button press
-				if (aButton.Get()) {
+				if (aButton.Get()&&!canturn) {
 					compressor.Stop();
 					wench->Set(1);
-				} else {
-					compressor.Start();
-					wench->Set(0);
-				}
+					canturn = true;
+				} 
+			}
+			else{
+				canturn = false;
+			}
+
+			if (canturn){
+				Wait(turnforseconds);
+				compressor.Start();
+				wench->Set(0);
+				canturn = false;
 			}
 
 			// launch the ball
