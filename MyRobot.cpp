@@ -126,7 +126,7 @@ public:
 			//Set sticks for DriveRobot
 			myRobot.TankDrive(stick1, stick2);
 
-			//First check if the wench can be used
+			//First check if the wench can be used test
 			if (isWenchCheckPressed.Get()) {
 				//switch wench on and off on button press
 				if (aButton.Get()) {
