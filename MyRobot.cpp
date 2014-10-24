@@ -133,17 +133,20 @@ public:
 
 			//First check if the wench can be used 
 			if (isWenchCheckPressed.Get()) {
-				//switch wench on and off on button press
+				//switch wench on. canturn controls the countdown
 				if (aButton.Get()&&!canturn) {
 					compressor.Stop();
 					wench->Set(1);
 					canturn = true;
 				} 
 			}
+			//if the limit switch is pressed, stop the wench and start the compressor
 			else{
+				compressor.Start();
+				wench->Set(0);
 				canturn = false;
 			}
-
+			//if time runs out before the switch is hit, stop the wench and start the compressor
 			if (canturn){
 				Wait(turnforseconds);
 				compressor.Start();
