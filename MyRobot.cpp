@@ -32,30 +32,42 @@ class RobotDemo: public IterativeRobot {
 
 	//Declares the double solenoid for the arms
 	DoubleSolenoid arm;
-
+	
+	//Declares the single solenoid for launch
 	Solenoid launch;
-
+	
+	//Declares the Driver Station console
 	DriverStationLCD *dsLCD;
+	
+	//declares Victor used to control wheels
+	Victor pickupWheel;
+	
+	//declares Victor used to control wench
+	Victor wench;
+	
+	
 	bool armState, r1_Old, x_Old;
 
 	float turnforseconds;
 	bool canturn;
 public:
 	RobotDemo() :
-				myRobot(3, 4), // these must be initialized in the same order
-				stick1(1), // as they are declared above.
-				stick2(2), xboxController(3), aButton(&xboxController, 1),
-				bButton(&xboxController, 2), xButton(&xboxController, 3),
-				yButton(&xboxController, 4), l1Button(&xboxController, 5),
-				r1Button(&xboxController, 6), isWenchCheckPressed(2),
-				compressor(1, 1), arm(1, 2), launch(3), dsLCD()
+				// these must be initialized in the same order
+				// as they are declared above.
+				myRobot(3, 4), // 3 is *, 4 is *
+				stick1(1), stick2(2), xboxController(3),
+				aButton(&xboxController, 1), bButton(&xboxController, 2),
+				xButton(&xboxController, 3), yButton(&xboxController, 4),
+				l1Button(&xboxController, 5), r1Button(&xboxController, 6),
+				isWenchCheckPressed(2), compressor(1, 1), arm(1, 2), launch(3),
+				dsLCD(), pickupWheel(2), wench(1)
 
 	{
 
 		myRobot.SetExpiration(0);
 		this->SetPeriod(0.1); //Set update period to sync with robot control packets (20ms nominal)
 
-		dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Wakarimasen!!");
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line2, "Wakarimasen!!");
 		dsLCD->UpdateLCD();
 		compressor.Start();
 		armState = false;
@@ -105,9 +117,9 @@ public:
 	 * Use this method for code which will be called periodically at a regular
 	 * rate while the robot is in autonomous mode.
 	 */
-	void RobotDemo::AutonomousPeriodic() 
-	{
-		myRobot.ArcadeDrive(2, 0);
+	void RobotDemo::AutonomousPeriodic() {
+		myRobot.ArcadeDrive(7, 0);
+		Wait(1);
 	}
 
 	/**
@@ -126,11 +138,6 @@ public:
 	 * rate while the robot is in teleop mode.
 	 */
 	void RobotDemo::TeleopPeriodic() {
-		//declares Victor used to control wench
-		Victor *wench = new Victor(1);
-
-		//declares Victor used to control wheels
-		Victor *pickupWheel = new Victor(2);
 
 		while (true) {
 			//Set sticks for DriveRobot
@@ -139,23 +146,23 @@ public:
 			//First check if the wench can be used 
 			if (isWenchCheckPressed.Get()) {
 				//switch wench on. canturn controls the countdown
-				if (aButton.Get()&&!canturn) {
+				if (aButton.Get() && !canturn) {
 					compressor.Stop();
-					wench->Set(1);
+					wench.Set(1);
 					canturn = true;
-				} 
+				}
 			}
 			//if the limit switch is pressed, stop the wench and start the compressor
-			else{
+			else {
 				compressor.Start();
-				wench->Set(0);
+				wench.Set(0);
 				canturn = false;
 			}
 			//if time runs out before the switch is hit, stop the wench and start the compressor
-			if (canturn){
+			if (canturn) {
 				Wait(turnforseconds);
 				compressor.Start();
-				wench->Set(0);
+				wench.Set(0);
 				canturn = false;
 			}
 
@@ -165,54 +172,55 @@ public:
 					launch.Set(true);
 					Wait(1);
 					launch.Set(false);
-					r1_Old =true;
-				}
-				else if(!r1Button.Get() ){
-					r1_Old=false;
+					r1_Old = true;
+				} else if (!r1Button.Get()) {
+					r1_Old = false;
 				}
 			}
-			
+
 			//switch arm forward on button press and off on button up
 			if (xButton.Get() && !x_Old) {
 				x_Old = true;
 				armState = !armState;
-				
+
 				if (armState) {
 					arm.Set(DoubleSolenoid::kForward);
-					dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"%s","fwd");
+					dsLCD->PrintfLine(DriverStationLCD::kUser_Line2, "%s",
+							"fwd");
 					dsLCD->UpdateLCD();
 					dsLCD->Clear();
 				} else {
 					arm.Set(DoubleSolenoid::kReverse);
-					dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"%s","rvrse");
+					dsLCD->PrintfLine(DriverStationLCD::kUser_Line1, "%s",
+							"rvrse");
 					dsLCD->UpdateLCD();
 					dsLCD->Clear();
 				}
-				
+
 				Wait(0.5);
 				arm.Set(DoubleSolenoid::kOff);
 				/*dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"%d, %B",arm.Get(),armState);
-				dsLCD->UpdateLCD();*/
-			} else if(!xButton.Get()){
+				 dsLCD->UpdateLCD();*/
+			} else if (!xButton.Get()) {
 				x_Old = false;
-			//	dsLCD->Clear();
-			//dsLCD->UpdateLCD();
+				//	dsLCD->Clear();
+				//dsLCD->UpdateLCD();
 			}
 
 			/* if y is pressed start the pickup wheel forward. if the b is pressed, start it backward. 
 			 else dont run
 			 */
 			if (yButton.Get()) {
-				pickupWheel->Set(1);
+				pickupWheel.Set(1);
 			} else if (bButton.Get()) {
-				pickupWheel->Set(-1);
+				pickupWheel.Set(-1);
 			} else {
-				pickupWheel->Set(0);
+				pickupWheel.Set(0);
 			}
 
 		}
 	}
-	
+
 	void RobotDemo::IsOperatorControl() {
 
 	}
