@@ -1,5 +1,5 @@
 IterativeTemplate_partialImage/Debug/Objects/IterativeTemplate/MyRobot.o:  \
- C:/WindRiver/workspace/2014BattleOfTheBorder/MyRobot.cpp \
+ C:/WindRiver/workspace/BattleOfTheBorder/MyRobot.cpp \
   C:/WindRiver/vxworks-6.3/target/h/WPILib/WPILib.h \
   C:/WindRiver/vxworks-6.3/target/h/string.h \
   C:/WindRiver/vxworks-6.3/target/h/types/vxANSI.h \

@@ -35,6 +35,7 @@ class RobotDemo: public IterativeRobot {
 
 	Solenoid launch;
 
+	DriverStationLCD *dsLCD;
 	bool armState, r1_Old, x_Old;
 
 	float turnforseconds;
@@ -47,13 +48,14 @@ public:
 				bButton(&xboxController, 2), xButton(&xboxController, 3),
 				yButton(&xboxController, 4), l1Button(&xboxController, 5),
 				r1Button(&xboxController, 6), isWenchCheckPressed(2),
-				compressor(1, 1), arm(1, 2), launch(3)
+				compressor(1, 1), arm(1, 2), launch(3), dsLCD()
 
 	{
 
 		myRobot.SetExpiration(0);
 		this->SetPeriod(0.1); //Set update period to sync with robot control packets (20ms nominal)
 
+		dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Wakarimasen!!");
 		compressor.Start();
 		armState = false;
 		turnforseconds = 1;
@@ -167,8 +169,6 @@ public:
 				}
 			}
 			
-			DriverStationLCD *dsLCD= DriverStationLCD::GetInstance();
-			
 			//switch arm forward on button press and off on button up
 			if (xButton.Get() && !x_Old) {
 				x_Old = true;
@@ -177,13 +177,13 @@ public:
 				if (armState) {
 					arm.Set(DoubleSolenoid::kForward);
 					dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"%s","fwd");
-									dsLCD->UpdateLCD();
-									dsLCD->Clear();
+					dsLCD->UpdateLCD();
+					dsLCD->Clear();
 				} else {
 					arm.Set(DoubleSolenoid::kReverse);
 					dsLCD->PrintfLine(DriverStationLCD::kUser_Line1,"%s","rvrse");
-													dsLCD->UpdateLCD();
-													dsLCD->Clear();
+					dsLCD->UpdateLCD();
+					dsLCD->Clear();
 				}
 				
 				Wait(0.5);

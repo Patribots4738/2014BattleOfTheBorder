@@ -32,7 +32,7 @@ MODE_DIR := NonDebug
 endif
 OBJ_DIR := .
 WS_ROOT_DIR := C:/WindRiver/wrwb-debugmode-workspace
-PRJ_ROOT_DIR := C:/WindRiver/workspace/2014BattleOfTheBorder
+PRJ_ROOT_DIR := C:/WindRiver/workspace/BattleOfTheBorder
 
 
 
