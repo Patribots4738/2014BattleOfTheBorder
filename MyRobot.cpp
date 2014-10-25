@@ -56,10 +56,11 @@ public:
 		this->SetPeriod(0.1); //Set update period to sync with robot control packets (20ms nominal)
 
 		dsLCD->PrintfLine(DriverStationLCD::kUser_Line2,"Wakarimasen!!");
+		dsLCD->UpdateLCD();
 		compressor.Start();
 		armState = false;
 		turnforseconds = 1;
-		canturn=	false;
+		canturn = false;
 	}
 
 	/**
@@ -104,7 +105,9 @@ public:
 	 * Use this method for code which will be called periodically at a regular
 	 * rate while the robot is in autonomous mode.
 	 */
-	void RobotDemo::AutonomousPeriodic() {
+	void RobotDemo::AutonomousPeriodic() 
+	{
+		myRobot.ArcadeDrive(2, 0);
 	}
 
 	/**
